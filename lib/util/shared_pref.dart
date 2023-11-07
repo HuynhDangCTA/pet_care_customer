@@ -1,0 +1,34 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:pet_care_customer/core/constants.dart';
+import 'package:pet_care_customer/model/user_response.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class SharedPref {
+  static Future<SharedPreferences> sharedPreferences =
+  SharedPreferences.getInstance();
+
+  static Future setUser(UserResponse user) async {
+    final shared = await sharedPreferences;
+    await shared.setString(Constants.users, jsonEncode(user.toMap()));
+  }
+
+  static Future setString(String key, String value) async {
+    final shared = await sharedPreferences;
+    await shared.setString(key, value);
+  }
+
+  static Future<UserResponse?> getUser() async {
+    final shared = await sharedPreferences;
+    String? userString = shared.getString(Constants.users);
+    debugPrint('user String: ${userString}');
+    if (userString == null || userString.isEmpty) return null;
+    return UserResponse.fromMap(jsonDecode(userString) as Map<String, dynamic>);
+  }
+
+  static Future removeUser() async {
+    final shared = await sharedPreferences;
+    await shared.remove(Constants.users);
+  }
+}
