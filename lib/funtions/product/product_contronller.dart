@@ -14,6 +14,7 @@ import 'package:pet_care_customer/widgets/app_button.dart';
 import 'package:pet_care_customer/widgets/app_text.dart';
 
 class ProductController extends GetxController {
+  static ProductController get instance => Get.find();
   RxList<Product> products = RxList();
   RxList<ServiceModel> services = RxList();
   List<Product> productsGet = [];
@@ -48,11 +49,11 @@ class ProductController extends GetxController {
       }
     });
 
-    Discount? discount;
     await FirebaseHelper.getDiscountInDate(DateTime.now()).then(
       (value) {
         if (value.docs.isNotEmpty) {
           for (var item in value.docs) {
+            Discount? discount;
             discount = Discount.fromMap(item.data() as Map<String, dynamic>);
             if (DateTime.now().isBefore(discount!.fromDate!)) {
               discount = null;
@@ -79,6 +80,7 @@ class ProductController extends GetxController {
         }
       },
     );
+    listenProduct();
   }
 
   void searchProduct(String? value) {
@@ -94,6 +96,23 @@ class ProductController extends GetxController {
     }
   }
 
+  void listenProduct() {
+    FirebaseHelper.listenProduct(
+      onModify: (product) {
+        if (productsGet.contains(product)) {
+          productsGet[productsGet.indexOf(product)].amount = product.amount;
+          products.clear();
+          products.addAll(productsGet);
+        }
+      },
+      onDelete: (product) {
+        productsGet.remove(product);
+        products.clear();
+        products.addAll(productsGet);
+      },
+    );
+  }
+
   Future getTypeProducts() async {
     await FirebaseHelper.getTypeProducts().then((value) {
       for (var item in value.docs) {
@@ -107,7 +126,25 @@ class ProductController extends GetxController {
     // debugPrint('user cart: $user');
     if (user == null) {
       Get.toNamed(RoutesConst.login);
-    } else {}
+    } else {
+      await FirebaseHelper.getProductFromCart(product.id!, user.id!)
+          .then((value) async {
+        if (value.exists) {
+          int amount = value.get(Constants.amount);
+          if (amount < product.amount) {
+            amount += 1;
+          }
+          await FirebaseHelper.updateCart(product, user.id!, (amount))
+              .then((value) {
+            DialogUtil.showSnackBar('Thêm vào giỏ hàng thành công');
+          });
+        } else {
+          await FirebaseHelper.addToCart(product, user.id!).then((value) {
+            DialogUtil.showSnackBar('Thêm vào giỏ hàng thành công');
+          });
+        }
+      });
+    }
   }
 
   void showFillter() async {

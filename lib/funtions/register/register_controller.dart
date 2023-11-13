@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pet_care_customer/core/constants.dart';
 import 'package:pet_care_customer/routes/routes_const.dart';
+import 'package:pet_care_customer/util/encode_util.dart';
 import 'package:pet_care_customer/util/shared_pref.dart';
 
 import '../../model/state.dart';
@@ -62,19 +63,19 @@ class RegisterController extends GetxController {
 
     if (kIsWeb) {
       if (webImage.value != null) {
-        image = await FirebaseHelper.uploadFileWeb(webImage.value!,
-            'avatar/avatar_$username');
+        image = await FirebaseHelper.uploadFileWeb(
+            webImage.value!, 'avatar/avatar_$username');
       }
     } else {
       if (imageFile.value != null) {
-        image = await FirebaseHelper.uploadFile(imageFile.value!,
-            'avatar/avatar_$username');
+        image = await FirebaseHelper.uploadFile(
+            imageFile.value!, 'avatar/avatar_$username');
       }
     }
-
+    String passwordSHA = EncodeUtil.generateSHA256(password);
     UserResponse data = UserResponse(
         username: username,
-        password: password,
+        password: passwordSHA,
         name: fullname,
         phoneNumber: phone,
         address: address,
@@ -84,6 +85,10 @@ class RegisterController extends GetxController {
     await FirebaseHelper.register(data).then((value) async {
       state.value = StateSuccess();
       await SharedPref.setUser(data);
+      String? id = await FirebaseHelper.getCustomer(phone);
+      if (id == null || id.isEmpty) {
+        await FirebaseHelper.newCustomer(data);
+      }
       Get.offAndToNamed(RoutesConst.home);
     }).catchError((error) {
       state.value = StateError(error.toString());
@@ -91,20 +96,26 @@ class RegisterController extends GetxController {
   }
 
   void pickImage() async {
-    final XFile? imagePick = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? imagePick =
+        await picker.pickImage(source: ImageSource.gallery);
     if (!kIsWeb) {
       if (imagePick != null) {
         imageFile.value = File(imagePick!.path);
         if (imageFile.value != null) {
-          image.value = Image.file(imageFile.value!, fit: BoxFit.cover,);
+          image.value = Image.file(
+            imageFile.value!,
+            fit: BoxFit.cover,
+          );
         }
-
       }
     } else if (kIsWeb) {
       webImage.value = await imagePick?.readAsBytes();
-      imageFile.value =  File(imagePick!.path);
+      imageFile.value = File(imagePick!.path);
       if (webImage.value != null) {
-        image.value = Image.memory(webImage.value!, fit: BoxFit.cover,);
+        image.value = Image.memory(
+          webImage.value!,
+          fit: BoxFit.cover,
+        );
       }
     }
   }

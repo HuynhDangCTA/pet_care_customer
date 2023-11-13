@@ -1,9 +1,15 @@
 import 'package:get/get.dart';
+import 'package:pet_care_customer/funtions/cart/cart_controller.dart';
 import 'package:pet_care_customer/funtions/home/home_controller.dart';
 import 'package:pet_care_customer/funtions/login/login_controller.dart';
+import 'package:pet_care_customer/funtions/order/order_controller.dart';
+import 'package:pet_care_customer/funtions/personal/personal_controller.dart';
 import 'package:pet_care_customer/funtions/product/product_contronller.dart';
 import 'package:pet_care_customer/funtions/register/register_controller.dart';
+import 'package:pet_care_customer/funtions/services/room/room_controller.dart';
+import 'package:pet_care_customer/funtions/services/services_controller.dart';
 import 'package:pet_care_customer/funtions/splash/splash_controller.dart';
+import 'package:pet_care_customer/funtions/voucher/voucher_controller.dart';
 
 class AllBinding extends Bindings {
   @override
@@ -13,5 +19,11 @@ class AllBinding extends Bindings {
     Get.lazyPut(() => RegisterController());
     Get.lazyPut(() => HomeController());
     Get.lazyPut(() => ProductController());
+    Get.lazyPut(() => CartController());
+    Get.lazyPut(() => OrderController());
+    Get.lazyPut(() => VoucherController());
+    Get.lazyPut(() => ServiceController());
+    Get.lazyPut(() => RoomController());
+    Get.lazyPut(() => PersonalController);
   }
 }

@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
           cardColor: Colors.white,
           useMaterial3: true,
           cardTheme: const CardTheme(
+            elevation: 5,
             surfaceTintColor: Colors.white,
           ),
           appBarTheme: const AppBarTheme(

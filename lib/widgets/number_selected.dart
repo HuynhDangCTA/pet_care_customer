@@ -4,9 +4,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 class NumberSelected extends StatefulWidget {
   final Function increase;
   final Function decrease;
+  final TextEditingController textController;
 
-  const NumberSelected(
-      {super.key, required this.increase, required this.decrease});
+  NumberSelected(
+      {super.key,
+      required this.increase,
+      required this.decrease,
+      required this.textController});
 
   @override
   State<NumberSelected> createState() => _NumberSelectedState();
@@ -26,8 +30,8 @@ class _NumberSelectedState extends State<NumberSelected> {
               widget.decrease();
             },
             child: Container(
-              width: 25,
-              height: 25,
+              width: 30,
+              height: 30,
               decoration: const BoxDecoration(
                   border:
                       Border(right: BorderSide(color: Colors.grey, width: 1))),
@@ -38,12 +42,18 @@ class _NumberSelectedState extends State<NumberSelected> {
             ),
           ),
           SizedBox(
-            height: 25,
-            width: 35,
+            height: 30,
+            width: 40,
             child: TextFormField(
+              onTapOutside: (value) {
+                FocusScope.of(context).unfocus();
+              },
               textAlign: TextAlign.center,
+              maxLines: 1,
               keyboardType: TextInputType.number,
-              style: TextStyle(fontSize: 12, color: Colors.black),
+              controller: widget.textController,
+              decoration: const InputDecoration(border: InputBorder.none),
+              style: const TextStyle(fontSize: 15, color: Colors.black),
             ),
           ),
           GestureDetector(
@@ -51,8 +61,8 @@ class _NumberSelectedState extends State<NumberSelected> {
               widget.increase();
             },
             child: Container(
-              width: 25,
-              height: 25,
+              width: 30,
+              height: 30,
               decoration: const BoxDecoration(
                   border:
                       Border(left: BorderSide(color: Colors.grey, width: 1))),

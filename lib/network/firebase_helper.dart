@@ -9,11 +9,13 @@ import 'package:pet_care_customer/core/constants.dart';
 import 'package:pet_care_customer/model/customer.dart';
 import 'package:pet_care_customer/model/invoice.dart';
 import 'package:pet_care_customer/model/item_warehouse.dart';
+import 'package:pet_care_customer/model/order_model.dart';
 import 'package:pet_care_customer/model/product.dart';
 import 'package:pet_care_customer/model/room.dart';
 import 'package:pet_care_customer/model/service.dart';
 import 'package:pet_care_customer/model/user_response.dart';
 import 'package:pet_care_customer/model/user_request.dart';
+import 'package:pet_care_customer/model/voucher.dart';
 
 import '../model/warehouse.dart';
 
@@ -39,6 +41,20 @@ class FirebaseHelper {
     DocumentReference result =
         await database.collection(Constants.users).add(data.toMap());
     return result;
+  }
+
+  static Future<String?> getCustomer(String phone) async {
+    String? id;
+    await database
+        .collection(Constants.customers)
+        .where(Constants.phone, isEqualTo: phone)
+        .get()
+        .then((value) {
+      if (value.docs.isNotEmpty) {
+        id = value.docs[0].id;
+      }
+    });
+    return id;
   }
 
   static Future<QuerySnapshot?> getAllStaff(String username) async {
@@ -98,8 +114,28 @@ class FirebaseHelper {
   static Future<QuerySnapshot> getAllProducts() async {
     return database
         .collection(Constants.products)
-        .orderBy(Constants.sold)
+        .orderBy(Constants.sold, descending: true)
         .get();
+  }
+
+  static void listenProduct(
+      {required Function(Product product) onModify,
+      required Function(Product product) onDelete}) {
+    database.collection(Constants.products).snapshots().listen((event) {
+      for (var type in event.docChanges) {
+        if (type.type == DocumentChangeType.modified) {
+          Product product =
+              Product.fromDocument(type.doc.data() as Map<String, dynamic>);
+          product.id = type.doc.id;
+          onModify(product);
+        } else if (type.type == DocumentChangeType.removed) {
+          Product product =
+              Product.fromDocument(type.doc.data() as Map<String, dynamic>);
+          product.id = type.doc.id;
+          onDelete(product);
+        }
+      }
+    });
   }
 
   static Future<void> updateProduct(Product product) async {
@@ -122,6 +158,13 @@ class FirebaseHelper {
         .collection(Constants.products)
         .doc(id)
         .update({Constants.amount: amount});
+  }
+
+  static Future updateSoldProduct(String productId, int sold) async {
+    return database
+        .collection(Constants.products)
+        .doc(productId)
+        .update({Constants.sold: sold});
   }
 
   static Future<DocumentReference> newService(ServiceModel service) async {
@@ -159,7 +202,7 @@ class FirebaseHelper {
         .add({Constants.type: type});
   }
 
-  static Future<DocumentReference> newCustomer(Customer customer) async {
+  static Future<DocumentReference> newCustomer(UserResponse customer) async {
     return database.collection(Constants.customers).add(customer.toMap());
   }
 
@@ -229,7 +272,29 @@ class FirebaseHelper {
         .doc(userid)
         .collection(Constants.carts)
         .doc(product.id)
-        .set({Constants.amount: product.amount});
+        .set({Constants.amount: 1});
+  }
+
+  static Future<void> updateCart(
+      Product product, String userId, int amount) async {
+    return database
+        .collection(Constants.users)
+        .doc(userId)
+        .collection(Constants.carts)
+        .doc(product.id)
+        .update({Constants.amount: amount});
+  }
+
+  static void listenCart(String userId,
+      {required Function(List) listener}) async {
+    database
+        .collection(Constants.users)
+        .doc(userId)
+        .collection(Constants.carts)
+        .snapshots()
+        .listen((event) {
+      listener(event.docs);
+    });
   }
 
   static Future<DocumentSnapshot> getProductFromCart(String id, String userID) {
@@ -247,6 +312,15 @@ class FirebaseHelper {
         .doc(userID)
         .collection(Constants.carts)
         .get();
+  }
+
+  static Future deleteProductFromCart(String userId, String productId) {
+    return database
+        .collection(Constants.users)
+        .doc(userId)
+        .collection(Constants.carts)
+        .doc(productId)
+        .delete();
   }
 
   static Future<DocumentSnapshot> getProductFromID(String id) {
@@ -330,5 +404,175 @@ class FirebaseHelper {
         .collection(Constants.discounts)
         .where(Constants.toDate, isGreaterThanOrEqualTo: date)
         .get();
+  }
+
+  static void listenVoucher(DateTime date,
+      {required Function(Voucher voucher) addEvent,
+      required Function(Voucher voucher) modifyEvent,
+      required Function(Voucher voucher) deleteEvent}) async {
+    database
+        .collection(Constants.vouchers)
+        .orderBy(Constants.toDate, descending: true)
+        .where(Constants.toDate, isGreaterThanOrEqualTo: date)
+        .snapshots()
+        .listen((event) {
+      for (var change in event.docChanges) {
+        if (change.type == DocumentChangeType.added) {
+          if (change.doc.exists) {
+            print('Đã thêm: ${change.doc.data()}');
+            Voucher voucher = Voucher.fromMap(change.doc.data()!);
+            voucher.id = change.doc.id;
+            addEvent(voucher);
+          }
+        }
+        if (change.type == DocumentChangeType.modified) {
+          print('Đã sửa đổi: ${change.doc.data()}');
+          Voucher voucher = Voucher.fromMap(change.doc.data()!);
+          voucher.id = change.doc.id;
+          modifyEvent(voucher);
+        }
+        if (change.type == DocumentChangeType.removed) {
+          Voucher voucher = Voucher.fromMap(change.doc.data()!);
+          voucher.id = change.doc.id;
+          deleteEvent(voucher);
+        }
+      }
+    });
+  }
+
+  static Future saveVoucher(Voucher voucher, String idUser) async {
+    await database
+        .collection(Constants.users)
+        .doc(idUser)
+        .collection(Constants.vouchers)
+        .doc(voucher.id)
+        .set(voucher.toMap());
+  }
+
+  static Future updateVoucher(int used, String voucherid) async {
+    await database
+        .collection(Constants.vouchers)
+        .doc(voucherid)
+        .update({Constants.used: used});
+  }
+
+  static Future<QuerySnapshot> getVoucherUser(
+      String userid, DateTime date) async {
+    return await database
+        .collection(Constants.users)
+        .doc(userid)
+        .collection(Constants.vouchers)
+        .where(Constants.toDate, isGreaterThanOrEqualTo: date)
+        .get();
+  }
+
+  static Future<DocumentReference> newOrder(OrderModel order) async {
+    return await database.collection(Constants.orders).add(order.toMap());
+  }
+
+  static Future addProductInOrder(Product product, String orderID) async {
+    await database
+        .collection(Constants.orders)
+        .doc(orderID)
+        .collection(Constants.products)
+        .doc(product.id)
+        .set(product.toMap());
+  }
+
+  static Future addCustomerInOrder(UserResponse user, String orderId) async {
+    await database
+        .collection(Constants.orders)
+        .doc(orderId)
+        .collection(Constants.customers)
+        .doc(user.id)
+        .set(user.toMap());
+  }
+
+  static Future addStaffInOrder(UserResponse user, String orderId) async {
+    await database
+        .collection(Constants.orders)
+        .doc(orderId)
+        .collection(Constants.staff)
+        .doc(user.id)
+        .set(user.toMap());
+  }
+
+  static Future addVoucherInOrder(Voucher voucher, String orderId) async {
+    await database
+        .collection(Constants.orders)
+        .doc(orderId)
+        .collection(Constants.vouchers)
+        .doc(voucher.id)
+        .set(voucher.toMap());
+  }
+
+  static Future deleteVoucherInUser(String voucherID, String userId) async {
+    await database
+        .collection(Constants.users)
+        .doc(userId)
+        .collection(Constants.vouchers)
+        .doc(voucherID)
+        .update({Constants.used: -10});
+  }
+
+  static Future deleteProductInCart(String userId, String productid) async {
+    await database
+        .collection(Constants.users)
+        .doc(userId)
+        .collection(Constants.carts)
+        .doc(productid)
+        .delete();
+  }
+
+  static void listenRoomCat(
+      {required Function(Room room) onAdded,
+      required Function(Room room) onModified,
+      required Function(Room room) onRemoved}) {
+    database.collection(Constants.roomCat).orderBy(Constants.name).snapshots().listen((event) {
+      for (var change in event.docChanges) {
+        if (change.type == DocumentChangeType.added) {
+          Room room =
+              Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+          room.id = change.doc.id;
+          onAdded(room);
+        } else if (change.type == DocumentChangeType.modified) {
+          Room room =
+          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+          room.id = change.doc.id;
+          onModified(room);
+        } else if (change.type == DocumentChangeType.removed) {
+          Room room =
+          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+          room.id = change.doc.id;
+          onRemoved(room);
+        }
+      }
+    });
+  }
+
+  static void listenRoomDog(
+      {required Function(Room room) onAdded,
+        required Function(Room room) onModified,
+        required Function(Room room) onRemoved}) {
+    database.collection(Constants.roomDog).orderBy(Constants.name).snapshots().listen((event) {
+      for (var change in event.docChanges) {
+        if (change.type == DocumentChangeType.added) {
+          Room room =
+          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+          room.id = change.doc.id;
+          onAdded(room);
+        } else if (change.type == DocumentChangeType.modified) {
+          Room room =
+          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+          room.id = change.doc.id;
+          onModified(room);
+        } else if (change.type == DocumentChangeType.removed) {
+          Room room =
+          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+          room.id = change.doc.id;
+          onRemoved(room);
+        }
+      }
+    });
   }
 }

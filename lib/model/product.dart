@@ -8,7 +8,7 @@ class Product {
   String? image;
   String? description;
   int? price;
-  int? amount;
+  int amount;
   int priceInput;
   String? type;
   String? unit;
@@ -61,4 +61,12 @@ class Product {
         type: data[Constants.type],
         selected: data['selected'] ?? false);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Product && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

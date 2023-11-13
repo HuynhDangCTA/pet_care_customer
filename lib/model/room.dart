@@ -27,4 +27,12 @@ class Room {
         image: json[Constants.image],
         isEmpty: json[Constants.isEmpty]);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Room && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
 }

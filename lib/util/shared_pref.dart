@@ -22,9 +22,12 @@ class SharedPref {
   static Future<UserResponse?> getUser() async {
     final shared = await sharedPreferences;
     String? userString = shared.getString(Constants.users);
-    debugPrint('user String: ${userString}');
     if (userString == null || userString.isEmpty) return null;
-    return UserResponse.fromMap(jsonDecode(userString) as Map<String, dynamic>);
+    UserResponse user =
+    UserResponse.fromMap(jsonDecode(userString) as Map<String, dynamic>);
+    user.id = jsonDecode(userString)['id'];
+    debugPrint('user pref ${user.toMap().toString()}');
+    return user;
   }
 
   static Future removeUser() async {

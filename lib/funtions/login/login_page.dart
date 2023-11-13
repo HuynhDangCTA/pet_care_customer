@@ -22,12 +22,12 @@ class LoginPage extends GetView<LoginController> {
       backgroundColor: MyColors.backgroundApp,
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.only(left: 25, right: 25),
+          padding: const EdgeInsets.only(left: 25, right: 25, top: 80, bottom: 80),
           height: size.height,
           width: size.width,
           child: Stack(children: [
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Column(
@@ -41,69 +41,71 @@ class LoginPage extends GetView<LoginController> {
                         fit: BoxFit.cover,
                       ),
                     ),
+                    const Center(
+                        child: AppText(
+                          text: 'ĐĂNG NHẬP',
+                          color: MyColors.primaryColor,
+                          isBold: true,
+                          size: 22,
+                        )),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     const SizedBox(
                       height: 20,
                     ),
-                  ],
-                ),
-                const Center(
-                    child: AppText(
-                      text: 'ĐĂNG NHẬP',
-                      color: MyColors.primaryColor,
-                      isBold: true,
-                      size: 22,
+                    const AppText(
+                      text: 'Số điện thoại',
+                      color: MyColors.textColor,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    MyTextFormField(
+                      label: '',
+                      controller: controller.userNameController,
+                      keyboardType: TextInputType.phone ,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const AppText(
+                      text: 'Mật khẩu',
+                      color: MyColors.textColor,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Obx(() => MyTextFormField(
+                      label: '',
+                      controller: controller.passwordController,
+                      obscureText: controller.passwordInVisible.value,
+                      suffixIcon: InkWell(
+                        child: (controller.passwordInVisible.value)
+                            ? const Icon(Icons.visibility_off)
+                            : const Icon(Icons.visibility),
+                        onTap: () {
+                          controller.changeHideOrShowPassword();
+                        },
+                      ),
                     )),
-                const SizedBox(
-                  height: 20,
-                ),
-                const AppText(
-                  text: 'Số điện thoại',
-                  color: MyColors.textColor,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                MyTextFormField(
-                  label: '',
-                  controller: controller.userNameController,
-                  keyboardType: TextInputType.phone ,
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                const AppText(
-                  text: 'Mật khẩu',
-                  color: MyColors.textColor,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Obx(() => MyTextFormField(
-                  label: '',
-                  controller: controller.passwordController,
-                  obscureText: controller.passwordInVisible.value,
-                  suffixIcon: InkWell(
-                    child: (controller.passwordInVisible.value)
-                        ? const Icon(Icons.visibility_off)
-                        : const Icon(Icons.visibility),
-                    onTap: () {
-                      controller.changeHideOrShowPassword();
-                    },
-                  ),
-                )),
-                const SizedBox(
-                  height: 20,
-                ),
-                AppButton(
-                  onPressed: () async {
-                    await controller.login();
-                    if (controller.state.value is StateError) {
-                      showErrorSnackBar(context, (controller.state.value as StateError).message);
-                    }
-                  },
-                  text: 'Đăng nhập',
-                  isResponsive: true,
-                  fontSize: 18,
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    AppButton(
+                      onPressed: () async {
+                        await controller.login();
+                        if (controller.state.value is StateError) {
+                          showErrorSnackBar(context, (controller.state.value as StateError).message);
+                        }
+                      },
+                      text: 'Đăng nhập',
+                      isResponsive: true,
+                      fontSize: 18,
+                    ),
+                  ],
                 ),
                 const SizedBox(
                   height: 20,

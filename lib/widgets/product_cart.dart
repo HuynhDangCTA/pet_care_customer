@@ -140,7 +140,7 @@ class ProductCart extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Padding(
+                  (product.amount! > 0) ? Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: IconButton(
                         onPressed: () {
@@ -148,7 +148,7 @@ class ProductCart extends StatelessWidget {
                           addToCart!(product);
                         },
                         icon: Icon(Icons.add_shopping_cart)),
-                  )
+                  ) : Container()
                 ],
               ),
             ),

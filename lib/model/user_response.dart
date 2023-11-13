@@ -10,6 +10,7 @@ class UserResponse {
   String? avatar;
   String? type;
   bool isDeleted;
+  int times;
 
   UserResponse(
       {this.id,
@@ -17,6 +18,7 @@ class UserResponse {
       this.password,
       this.name,
       this.phoneNumber,
+      this.times = 0,
       this.address,
       this.avatar,
       this.type,
@@ -31,6 +33,7 @@ class UserResponse {
       Constants.phone: phoneNumber,
       Constants.address: address,
       Constants.avt: avatar,
+      Constants.times: times,
       Constants.typeAccount: type,
       Constants.isDeleted: isDeleted
     };
