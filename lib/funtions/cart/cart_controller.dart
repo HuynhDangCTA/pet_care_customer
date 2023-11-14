@@ -53,18 +53,18 @@ class CartController extends GetxController {
           for (var item in value.docs) {
             Discount? discount;
             discount = Discount.fromMap(item.data() as Map<String, dynamic>);
-            if (DateTime.now().isBefore(discount!.fromDate!)) {
+            if (DateTime.now().isBefore(discount.fromDate!)) {
               discount = null;
             }
             if (discount != null) {
               if (discount.isAllProduct!) {
                 for (var product in products) {
-                  product.discount = discount!.discount!;
+                  product.discount = discount.discount!;
                 }
               } else {
                 for (var product in products) {
-                  if (discount!.productId!.contains(product.id)) {
-                    product.discount = discount!.discount!;
+                  if (discount.productId!.contains(product.id)) {
+                    product.discount = discount.discount!;
                   }
                 }
               }
@@ -74,7 +74,7 @@ class CartController extends GetxController {
         }
       },
     );
-    // DialogUtil.hideLoading();
+    DialogUtil.hideLoading();
   }
 
   void changeSelected(index) {

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pet_care_customer/core/colors.dart';
 import 'package:pet_care_customer/funtions/cart/cart_controller.dart';
 import 'package:pet_care_customer/util/number_util.dart';
 import 'package:pet_care_customer/widgets/app_button.dart';
 import 'package:pet_care_customer/widgets/app_text.dart';
 import 'package:pet_care_customer/widgets/cart_item.dart';
 import 'package:pet_care_customer/widgets/empty_data.dart';
-import 'package:pet_care_customer/widgets/number_selected.dart';
 
 class CartPage extends GetView<CartController> {
   const CartPage({super.key});
