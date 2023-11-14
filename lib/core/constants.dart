@@ -1,6 +1,8 @@
 class Constants {
   //Firebase database collection
   static const String saveUser = 'saveUser';
+  static const String token = 'token';
+
   // table users
   static const String id = 'id';
   static const String users = 'users';

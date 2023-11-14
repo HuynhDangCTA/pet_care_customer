@@ -35,19 +35,17 @@ class HomePage extends GetView<HomeController> {
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.all(2),
-                        constraints: const BoxConstraints(
-                          minWidth: 20,
-                          minHeight: 20
-                        ),
+                        constraints:
+                            const BoxConstraints(minWidth: 20, minHeight: 20),
                         decoration: BoxDecoration(
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(1000)),
                         child: Center(
                           child: Obx(() => AppText(
-                            text: controller.itemCart.value.toString(),
-                            color: Colors.white,
-                            size: 9,
-                          )),
+                                text: controller.itemCart.value.toString(),
+                                color: Colors.white,
+                                size: 9,
+                              )),
                         ),
                       ),
                     )
@@ -56,7 +54,9 @@ class HomePage extends GetView<HomeController> {
               ))
         ],
         title: Obx(
-          () => Text(controller.titleCustomer[controller.currentPage.value]),
+          () => Text(
+            controller.titleCustomer[controller.currentPage.value],
+          ),
         ),
       ),
       body: Obx(() => controller.pagesCustomer[controller.currentPage.value]),
@@ -74,11 +74,9 @@ class HomePage extends GetView<HomeController> {
                 BottomNavigationBarItem(
                     icon: Icon(Icons.paid_rounded), label: 'Sản phẩm'),
                 BottomNavigationBarItem(
-                    icon: Icon(FontAwesomeIcons.spa),
-                    label: 'Dịch vụ'),
+                    icon: Icon(FontAwesomeIcons.spa), label: 'Dịch vụ'),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.discount),
-                    label: 'Voucher'),
+                    icon: Icon(Icons.discount), label: 'Voucher'),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.people_alt), label: 'Cá nhân'),
               ])),

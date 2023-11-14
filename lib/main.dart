@@ -37,12 +37,10 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(
               backgroundColor: MyColors.primaryColor,
               foregroundColor: Colors.white,
-
               titleTextStyle: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 23,
-              )
-          )),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 23,
+                  fontFamily: 'Roboto'))),
       initialBinding: AllBinding(),
       initialRoute: RoutesConst.splash,
       getPages: Routes.routes,

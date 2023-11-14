@@ -16,6 +16,7 @@ class MyTextFormField extends StatefulWidget {
   final Function? onTap;
   final Function(String?)? onChange;
   final bool isCurrency;
+  final String? initText;
   final TextAlign textAlign;
 
   const MyTextFormField(
@@ -34,7 +35,7 @@ class MyTextFormField extends StatefulWidget {
       this.onTap,
       this.onChange,
       this.textAlign = TextAlign.start,
-      this.isCurrency = false});
+      this.isCurrency = false, this.initText});
 
   @override
   State<MyTextFormField> createState() => _MyTextFormFieldState();
@@ -78,6 +79,7 @@ class _MyTextFormFieldState extends State<MyTextFormField> {
               ]),
           child: Center(
             child: TextFormField(
+              initialValue: widget.initText,
               onTapOutside: (event) {
                 FocusScope.of(context).unfocus();
               },

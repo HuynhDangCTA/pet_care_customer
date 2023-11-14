@@ -14,6 +14,7 @@ import 'package:pet_care_customer/model/user_response.dart';
 import 'package:pet_care_customer/model/voucher.dart';
 import 'package:pet_care_customer/network/firebase_helper.dart';
 import 'package:pet_care_customer/routes/routes_const.dart';
+import 'package:pet_care_customer/services/send_notify.dart';
 import 'package:pet_care_customer/util/date_util.dart';
 import 'package:pet_care_customer/util/dialog_util.dart';
 import 'package:pet_care_customer/util/number_util.dart';
@@ -98,7 +99,7 @@ class OrderController extends GetxController {
       discountMoney: discountMoney,
       shipFee: ship.value,
       payMoney: pay,
-      status: OrderStatus.choXacNhan,
+      status: OrderStatusConst.choXacNhan,
       voucherMoney: voucherMoney,
     );
     String docId = '';
@@ -134,6 +135,22 @@ class OrderController extends GetxController {
     }
     DialogUtil.hideLoading();
     DialogUtil.showOrderSuccess();
+
+    List<String> tokens = [];
+    await FirebaseHelper.getAllManager().then((value) {
+      if (value.docs.isNotEmpty) {
+        for (var doc in value.docs) {
+          UserResponse response =
+              UserResponse.fromMap(doc.data() as Map<String, dynamic>);
+          tokens.add(response.token!);
+        }
+      }
+    });
+
+    SendNotify.sendNotifyFromMultipleUser(
+        'Có đơn hàng mới',
+        'Đơn hàng vừa được ${user!.name} tạo. Hãy vào để xử lý đơn hàng!',
+        tokens);
     Future.delayed(
       const Duration(seconds: 1),
       () {

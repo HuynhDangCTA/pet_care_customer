@@ -10,4 +10,9 @@ class RoutesConst {
   static const voucher = '/voucher';
   static const room = '/room';
   static const personal = '/personal';
+  static const myOrder = '/myOrder';
+  static const myOrderDetail = '/myOrderDetail';
+  static const contact = '/contact';
+  static const info = '/info';
+  static const changePass = '/changePass';
 }

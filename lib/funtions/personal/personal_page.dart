@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:pet_care_customer/core/colors.dart';
 import 'package:pet_care_customer/funtions/home/home_controller.dart';
 import 'package:pet_care_customer/funtions/personal/personal_controller.dart';
+import 'package:pet_care_customer/routes/routes_const.dart';
+import 'package:pet_care_customer/widgets/app_button.dart';
 import 'package:pet_care_customer/widgets/app_text.dart';
 
 class PersonalPage extends GetView<PersonalController> {
@@ -24,7 +27,16 @@ class PersonalPage extends GetView<PersonalController> {
                   color: MyColors.primaryColor,
                   borderRadius: BorderRadius.circular(1000),
                 ),
-                child: ClipOval(child: Image.asset('images/profile.png')),
+                child: ClipOval(
+                    child: (controller.user != null)
+                        ? Image.network(
+                            controller.user!.avatar!,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset('images/profile.png');
+                            },
+                          )
+                        : Image.asset('images/profile.png')),
               ),
               Positioned(
                   bottom: 0,
@@ -116,79 +128,90 @@ class PersonalPage extends GetView<PersonalController> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFf5f5f5),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Center(child: profile),
-            const SizedBox(
-              height: 10,
-            ),
-            itemSetting('Hồ sơ', [
-              Item(
-                  icon: Icons.person_2_outlined,
-                  title: 'Thông tin tài khoản',
-                  onTap: () {}),
-              Item(
-                  icon: Icons.password_outlined,
-                  title: 'Đổi mật khẩu',
-                  onTap: () {}),
-            ]),
-            itemSetting('Đơn mua', [
-              Item(
-                  icon: Icons.policy_outlined,
-                  title: 'Chờ xác nhận',
-                  onTap: () {}),
-              Item(
-                  icon: Icons.security_outlined,
-                  title: 'Đã hoàn thành',
-                  onTap: () {}),
-              Item(
-                  icon: Icons.security_outlined,
-                  title: 'Đã hủy',
-                  onTap: () {}),
-            ]),
-            itemSetting('Khác', [
-              Item(
-                  icon: Icons.contact_emergency_outlined,
-                  title: 'Liên hệ',
-                  onTap: () {
-                  }),
-              Item(icon: Icons.logout, title: 'Đăng xuất', onTap: () {
-                HomeController.instants.logout();
-              }),
-            ]),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: AppText(
-                      text: 'Phiên bản',
-                      color: Colors.grey.withOpacity(0.8),
-                    ),
+      body: (controller.user != null)
+          ? SingleChildScrollView(
+              child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                Center(child: profile),
+                const SizedBox(
+                  height: 10,
+                ),
+                itemSetting('', [
+                  Item(
+                      icon: Icons.person_2_outlined,
+                      title: 'Thông tin tài khoản',
+                      onTap: () {
+                        Get.toNamed(RoutesConst.info);
+                      }),
+                  Item(
+                      icon: Icons.password_outlined,
+                      title: 'Đổi mật khẩu',
+                      onTap: () {
+                        Get.toNamed(RoutesConst.changePass);
+                      }),
+                  Item(
+                      icon: Icons.card_travel_outlined,
+                      title: 'Đơn hàng của tôi',
+                      onTap: () {
+                        Get.toNamed(RoutesConst.myOrder);
+                      }),
+                  Item(
+                      icon: Icons.contact_emergency_outlined,
+                      title: 'Liên hệ',
+                      onTap: () {
+                        Get.toNamed(RoutesConst.contact);
+                      }),
+                  Item(
+                      icon: Icons.logout,
+                      title: 'Đăng xuất',
+                      onTap: () {
+                        HomeController.instants.logout();
+                      }),
+                ]),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: AppText(
+                          text: 'Phiên bản',
+                          color: Colors.grey.withOpacity(0.8),
+                        ),
+                      ),
+                      Expanded(
+                        child: AppText(
+                          textAlign: TextAlign.right,
+                          text: '1.0',
+                          color: Colors.grey.withOpacity(0.8),
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: AppText(
-                      textAlign: TextAlign.right,
-                      text: '1.0',
-                      color: Colors.grey.withOpacity(0.8),
-                    ),
-                  ),
-                ],
+                ),
+                const SizedBox(
+                  height: 50,
+                ),
+              ],
+            ))
+          : Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30),
+                child: AppButton(
+                  onPressed: () {
+                    Get.toNamed(RoutesConst.login);
+                  },
+                  text: 'Đăng nhập',
+                  isResponsive: true,
+                  isShadow: false,
+                ),
               ),
             ),
-            const SizedBox(
-              height: 50,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

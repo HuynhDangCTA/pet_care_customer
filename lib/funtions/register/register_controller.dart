@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pet_care_customer/core/constants.dart';
 import 'package:pet_care_customer/routes/routes_const.dart';
+import 'package:pet_care_customer/services/fcm_service.dart';
 import 'package:pet_care_customer/util/encode_util.dart';
 import 'package:pet_care_customer/util/shared_pref.dart';
 
@@ -84,12 +85,15 @@ class RegisterController extends GetxController {
 
     await FirebaseHelper.register(data).then((value) async {
       state.value = StateSuccess();
+      data.id = value.id;
+      String? token = await FCMService.getToken(value.id!);
+      data.token = token;
       await SharedPref.setUser(data);
       String? id = await FirebaseHelper.getCustomer(phone);
       if (id == null || id.isEmpty) {
         await FirebaseHelper.newCustomer(data);
       }
-      Get.offAndToNamed(RoutesConst.home);
+      Get.offAllNamed(RoutesConst.home);
     }).catchError((error) {
       state.value = StateError(error.toString());
     });

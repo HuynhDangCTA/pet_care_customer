@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:pet_care_customer/core/colors.dart';
 import 'package:pet_care_customer/funtions/product/product_contronller.dart';
 import 'package:pet_care_customer/util/number_util.dart';
+import 'package:pet_care_customer/widgets/app_button.dart';
 import 'package:pet_care_customer/widgets/app_text.dart';
 
 class ProductDetailPage extends GetView<ProductController> {
@@ -74,6 +75,24 @@ class ProductDetailPage extends GetView<ProductController> {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(color: Colors.white, boxShadow: [
+          BoxShadow(
+              color: Colors.black12,
+              blurRadius: 2,
+              spreadRadius: 2,
+              offset: Offset(0, -2))
+        ]),
+        padding: const EdgeInsets.all(10),
+        child: AppButton(
+          onPressed: () {
+            controller.addToCard(controller.product!);
+          },
+          text: 'Thêm vào giỏ hàng',
+          isResponsive: true,
+          isShadow: false,
+        ),
       ),
     );
   }

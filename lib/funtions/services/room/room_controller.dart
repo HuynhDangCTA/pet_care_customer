@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:pet_care_customer/model/room.dart';
 import 'package:pet_care_customer/network/firebase_helper.dart';
@@ -7,6 +9,8 @@ class RoomController extends GetxController {
 
   RxList<Room> roomsCat = <Room>[].obs;
   RxList<Room> roomsDog = <Room>[].obs;
+  late StreamSubscription roomCatListener;
+  late StreamSubscription roomDogListener;
 
   @override
   void onInit() {
@@ -16,7 +20,7 @@ class RoomController extends GetxController {
   }
 
   void listenRoomCat() {
-    FirebaseHelper.listenRoomCat(
+    roomCatListener = FirebaseHelper.listenRoomCat(
       onAdded: (room) {
         roomsCat.add(room);
       },
@@ -32,7 +36,7 @@ class RoomController extends GetxController {
   }
 
   void listenRoomDog() {
-    FirebaseHelper.listenRoomDog(
+    roomDogListener = FirebaseHelper.listenRoomDog(
       onAdded: (room) {
         roomsDog.add(room);
       },
@@ -45,5 +49,13 @@ class RoomController extends GetxController {
         roomsDog.remove(room);
       },
     );
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+    roomDogListener.cancel();
+    roomCatListener.cancel();
   }
 }

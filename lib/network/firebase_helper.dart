@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -66,6 +67,13 @@ class FirebaseHelper {
     return result;
   }
 
+  static Future<QuerySnapshot> getAllManager() async {
+    return database.collection(Constants.users)
+        .where(Constants.typeAccount, isNotEqualTo: Constants.typeCustomer)
+        .get();
+  }
+
+
   static Future<void> editUser(UserResponse data) async {
     return await database
         .collection(Constants.users)
@@ -118,10 +126,10 @@ class FirebaseHelper {
         .get();
   }
 
-  static void listenProduct(
+  static StreamSubscription listenProduct(
       {required Function(Product product) onModify,
       required Function(Product product) onDelete}) {
-    database.collection(Constants.products).snapshots().listen((event) {
+    return database.collection(Constants.products).snapshots().listen((event) {
       for (var type in event.docChanges) {
         if (type.type == DocumentChangeType.modified) {
           Product product =
@@ -285,9 +293,9 @@ class FirebaseHelper {
         .update({Constants.amount: amount});
   }
 
-  static void listenCart(String userId,
-      {required Function(List) listener}) async {
-    database
+  static StreamSubscription listenCart(String userId,
+      {required Function(List) listener}) {
+    return database
         .collection(Constants.users)
         .doc(userId)
         .collection(Constants.carts)
@@ -406,11 +414,11 @@ class FirebaseHelper {
         .get();
   }
 
-  static void listenVoucher(DateTime date,
+  static StreamSubscription listenVoucher(DateTime date,
       {required Function(Voucher voucher) addEvent,
       required Function(Voucher voucher) modifyEvent,
-      required Function(Voucher voucher) deleteEvent}) async {
-    database
+      required Function(Voucher voucher) deleteEvent}) {
+    return database
         .collection(Constants.vouchers)
         .orderBy(Constants.toDate, descending: true)
         .where(Constants.toDate, isGreaterThanOrEqualTo: date)
@@ -524,11 +532,15 @@ class FirebaseHelper {
         .delete();
   }
 
-  static void listenRoomCat(
+  static StreamSubscription listenRoomCat(
       {required Function(Room room) onAdded,
       required Function(Room room) onModified,
       required Function(Room room) onRemoved}) {
-    database.collection(Constants.roomCat).orderBy(Constants.name).snapshots().listen((event) {
+    return database
+        .collection(Constants.roomCat)
+        .orderBy(Constants.name)
+        .snapshots()
+        .listen((event) {
       for (var change in event.docChanges) {
         if (change.type == DocumentChangeType.added) {
           Room room =
@@ -537,12 +549,12 @@ class FirebaseHelper {
           onAdded(room);
         } else if (change.type == DocumentChangeType.modified) {
           Room room =
-          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+              Room.fromDocument(change.doc.data() as Map<String, dynamic>);
           room.id = change.doc.id;
           onModified(room);
         } else if (change.type == DocumentChangeType.removed) {
           Room room =
-          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+              Room.fromDocument(change.doc.data() as Map<String, dynamic>);
           room.id = change.doc.id;
           onRemoved(room);
         }
@@ -550,29 +562,111 @@ class FirebaseHelper {
     });
   }
 
-  static void listenRoomDog(
+  static StreamSubscription listenRoomDog(
       {required Function(Room room) onAdded,
-        required Function(Room room) onModified,
-        required Function(Room room) onRemoved}) {
-    database.collection(Constants.roomDog).orderBy(Constants.name).snapshots().listen((event) {
+      required Function(Room room) onModified,
+      required Function(Room room) onRemoved}) {
+    return database
+        .collection(Constants.roomDog)
+        .orderBy(Constants.name)
+        .snapshots()
+        .listen((event) {
       for (var change in event.docChanges) {
         if (change.type == DocumentChangeType.added) {
           Room room =
-          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+              Room.fromDocument(change.doc.data() as Map<String, dynamic>);
           room.id = change.doc.id;
           onAdded(room);
         } else if (change.type == DocumentChangeType.modified) {
           Room room =
-          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+              Room.fromDocument(change.doc.data() as Map<String, dynamic>);
           room.id = change.doc.id;
           onModified(room);
         } else if (change.type == DocumentChangeType.removed) {
           Room room =
-          Room.fromDocument(change.doc.data() as Map<String, dynamic>);
+              Room.fromDocument(change.doc.data() as Map<String, dynamic>);
           room.id = change.doc.id;
           onRemoved(room);
         }
       }
     });
+  }
+
+  static StreamSubscription listenOrder(String userId,
+      {required Function(OrderModel order) onAdded,
+      required Function(OrderModel order) onModified,
+      required Function(OrderModel order) onRemoved}) {
+    return database
+        .collection(Constants.orders)
+        .where(Constants.customerId)
+        .orderBy(Constants.createdAt, descending: true)
+        .snapshots()
+        .listen((event) {
+      for (var change in event.docChanges) {
+        if (change.type == DocumentChangeType.added) {
+          OrderModel order =
+              OrderModel.fromMap(change.doc.data() as Map<String, dynamic>);
+          order.id = change.doc.id;
+          order.product = [];
+          onAdded(order);
+        } else if (change.type == DocumentChangeType.modified) {
+          OrderModel order =
+              OrderModel.fromMap(change.doc.data() as Map<String, dynamic>);
+          order.id = change.doc.id;
+          print('modifed: ${change.doc.data()}');
+          onModified(order);
+        } else if (change.type == DocumentChangeType.removed) {
+          OrderModel order =
+              OrderModel.fromMap(change.doc.data() as Map<String, dynamic>);
+          order.id = change.doc.id;
+          onRemoved(order);
+        }
+      }
+    });
+  }
+
+  static Future<QuerySnapshot> getProductFromOrder(String orderid) async {
+    return database
+        .collection(Constants.orders)
+        .doc(orderid)
+        .collection(Constants.products)
+        .get();
+  }
+
+  static Future<QuerySnapshot> getStaffFromOrder(String orderid) async {
+    return database
+        .collection(Constants.orders)
+        .doc(orderid)
+        .collection(Constants.staff)
+        .get();
+  }
+
+  static Future updateStatusOrder(String idOrder, String status) async {
+    return database
+        .collection(Constants.orders)
+        .doc(idOrder)
+        .update({Constants.status: status});
+  }
+
+  static Future<QuerySnapshot> getVoucherFromOrder(String orderid) async {
+    return database
+        .collection(Constants.orders)
+        .doc(orderid)
+        .collection(Constants.vouchers)
+        .get();
+  }
+
+  static Future changePassword(String password, String userId) async {
+    return database
+        .collection(Constants.users)
+        .doc(userId)
+        .update({Constants.password: password});
+  }
+
+  static Future<void> updateToken(String token, String userId) async {
+    await database
+        .collection(Constants.users)
+        .doc(userId)
+        .update({Constants.token: token});
   }
 }

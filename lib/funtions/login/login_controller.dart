@@ -9,6 +9,7 @@ import 'package:pet_care_customer/model/user_request.dart';
 import 'package:pet_care_customer/model/user_response.dart';
 import 'package:pet_care_customer/network/firebase_helper.dart';
 import 'package:pet_care_customer/routes/routes_const.dart';
+import 'package:pet_care_customer/services/fcm_service.dart';
 import 'package:pet_care_customer/util/encode_util.dart';
 import 'package:pet_care_customer/util/shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,10 +44,13 @@ class LoginController extends GetxController {
             UserResponse.fromMap(value.docs[0].data() as Map<String, dynamic>);
         userResponse.id = value.docs[0].id;
         debugPrint('userlogin: ${userResponse.name}');
+        String? token = await FCMService.getToken(userResponse.id!);
+        userResponse.token = token;
         await SharedPref.setUser(userResponse);
         HomeController.instants.userCurrent = userResponse;
         HomeController.instants.listenCart();
-        Get.offAndToNamed(RoutesConst.home, arguments: user);
+        // Get.offAndToNamed(RoutesConst.home, arguments: user);
+        Get.offAllNamed(RoutesConst.home, arguments: user);
       } else {
         state.value = StateError('Tài khoản hoặc mật khẩu không đúng');
       }

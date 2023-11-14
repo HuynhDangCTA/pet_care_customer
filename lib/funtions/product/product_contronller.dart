@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pet_care_customer/core/colors.dart';
@@ -22,6 +24,7 @@ class ProductController extends GetxController {
   RxList<String> valueTypeFiller = <String>[].obs;
   RxList<String> typeProducts = <String>[].obs;
   Product? product;
+  late StreamSubscription productStream;
 
   @override
   void onReady() async {
@@ -97,7 +100,7 @@ class ProductController extends GetxController {
   }
 
   void listenProduct() {
-    FirebaseHelper.listenProduct(
+    productStream = FirebaseHelper.listenProduct(
       onModify: (product) {
         if (productsGet.contains(product)) {
           productsGet[productsGet.indexOf(product)].amount = product.amount;
@@ -232,5 +235,12 @@ class ProductController extends GetxController {
   void goDetail(Product product) {
     this.product = product;
     Get.toNamed(RoutesConst.productDetail);
+  }
+
+  @override
+  void onClose() {
+    productStream.cancel();
+    super.onClose();
+
   }
 }

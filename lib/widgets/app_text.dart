@@ -32,6 +32,7 @@ class AppText extends StatelessWidget {
         fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
         fontStyle: FontStyle.normal,
         decoration: decoration,
+        fontFamily: 'Roboto'
       ),
     );
   }

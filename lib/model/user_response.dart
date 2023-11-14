@@ -9,6 +9,7 @@ class UserResponse {
   String? address;
   String? avatar;
   String? type;
+  String? token;
   bool isDeleted;
   int times;
 
@@ -20,6 +21,7 @@ class UserResponse {
       this.phoneNumber,
       this.times = 0,
       this.address,
+      this.token,
       this.avatar,
       this.type,
       this.isDeleted = false});
@@ -31,6 +33,7 @@ class UserResponse {
       Constants.password: password,
       Constants.fullname: name,
       Constants.phone: phoneNumber,
+      Constants.token: token ?? '',
       Constants.address: address,
       Constants.avt: avatar,
       Constants.times: times,
@@ -44,6 +47,7 @@ class UserResponse {
         username: json[Constants.username],
         password: json[Constants.password],
         name: json[Constants.fullname],
+        token: json[Constants.token],
         phoneNumber: json[Constants.phone],
         address: json[Constants.address],
         avatar: json[Constants.avt],

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:pet_care_customer/funtions/home/home_controller.dart';
 import 'package:pet_care_customer/model/user_response.dart';
@@ -10,6 +12,7 @@ class VoucherController extends GetxController {
   RxList<Voucher> vouchers = <Voucher>[].obs;
   UserResponse? user = HomeController.instants.userCurrent;
   List<Voucher> voucherSaved = [];
+  late StreamSubscription voucherListener;
 
   @override
   void onInit() async {
@@ -38,7 +41,7 @@ class VoucherController extends GetxController {
   }
 
   void listenVoucher() {
-    FirebaseHelper.listenVoucher(
+    voucherListener = FirebaseHelper.listenVoucher(
       DateTime.now(),
       addEvent: (voucher) {
         if (voucher.fromDate!.isBefore(DateTime.now())) {
@@ -84,5 +87,12 @@ class VoucherController extends GetxController {
         }
       }
     });
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+    voucherListener.cancel();
   }
 }

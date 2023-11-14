@@ -74,7 +74,7 @@ class CartController extends GetxController {
         }
       },
     );
-    DialogUtil.hideLoading();
+    // DialogUtil.hideLoading();
   }
 
   void changeSelected(index) {
