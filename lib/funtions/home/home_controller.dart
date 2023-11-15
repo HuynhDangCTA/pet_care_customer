@@ -42,7 +42,7 @@ class HomeController extends GetxController {
     currentPage.value = index;
   }
 
-  void logout() async {
+  Future logout() async {
     await SharedPref.removeUser();
     Get.offAndToNamed(RoutesConst.login);
   }

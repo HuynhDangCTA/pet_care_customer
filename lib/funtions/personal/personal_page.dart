@@ -64,12 +64,12 @@ class PersonalPage extends GetView<PersonalController> {
           const SizedBox(
             height: 15,
           ),
-          AppText(
+          (controller.user != null) ? AppText(
             text: controller.user!.name ?? '',
             color: MyColors.primaryColor,
             size: 20,
             isBold: true,
-          ),
+          ) : Container(),
         ],
       ),
     );
@@ -168,8 +168,8 @@ class PersonalPage extends GetView<PersonalController> {
                   Item(
                       icon: Icons.logout,
                       title: 'Đăng xuất',
-                      onTap: () {
-                        HomeController.instants.logout();
+                      onTap: () async {
+                        await HomeController.instants.logout();
                       }),
                 ]),
                 Padding(
