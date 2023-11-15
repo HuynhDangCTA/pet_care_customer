@@ -43,6 +43,7 @@ class LoginController extends GetxController {
         String? token = await FCMService.getToken(userResponse.id!);
         userResponse.token = token;
         await SharedPref.setUser(userResponse);
+        Get.lazyPut(() => HomeController());
         HomeController.instants.userCurrent = userResponse;
         HomeController.instants.listenCart();
         // Get.offAndToNamed(RoutesConst.home, arguments: user);
@@ -58,8 +59,4 @@ class LoginController extends GetxController {
     Get.toNamed(RoutesConst.register);
   }
 
-  @override
-  void onClose() {
-    super.onClose();
-  }
 }

@@ -239,8 +239,7 @@ class ProductController extends GetxController {
 
   @override
   void onClose() {
-    productStream.cancel();
     super.onClose();
-
+    productStream.cancel();
   }
 }

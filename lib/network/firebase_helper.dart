@@ -598,7 +598,7 @@ class FirebaseHelper {
       required Function(OrderModel order) onRemoved}) {
     return database
         .collection(Constants.orders)
-        .where(Constants.customerId)
+        .where(Constants.customerId, isEqualTo: userId)
         .orderBy(Constants.createdAt, descending: true)
         .snapshots()
         .listen((event) {

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pet_care_customer/core/colors.dart';
 import 'package:pet_care_customer/core/constants.dart';
-import 'package:pet_care_customer/funtions/cart/cart_controller.dart';
 import 'package:pet_care_customer/funtions/home/home_controller.dart';
 import 'package:pet_care_customer/funtions/order/order_status.dart';
 import 'package:pet_care_customer/funtions/product/product_contronller.dart';
@@ -13,9 +12,7 @@ import 'package:pet_care_customer/model/product.dart';
 import 'package:pet_care_customer/model/user_response.dart';
 import 'package:pet_care_customer/model/voucher.dart';
 import 'package:pet_care_customer/network/firebase_helper.dart';
-import 'package:pet_care_customer/routes/routes_const.dart';
 import 'package:pet_care_customer/services/send_notify.dart';
-import 'package:pet_care_customer/util/date_util.dart';
 import 'package:pet_care_customer/util/dialog_util.dart';
 import 'package:pet_care_customer/util/number_util.dart';
 import 'package:pet_care_customer/widgets/app_button.dart';
@@ -142,7 +139,7 @@ class OrderController extends GetxController {
         for (var doc in value.docs) {
           UserResponse response =
               UserResponse.fromMap(doc.data() as Map<String, dynamic>);
-          tokens.add(response.token!);
+          tokens.add(response.token ?? '');
         }
       }
     });

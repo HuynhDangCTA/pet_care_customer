@@ -64,8 +64,8 @@ class PersonalPage extends GetView<PersonalController> {
           const SizedBox(
             height: 15,
           ),
-          const AppText(
-            text: 'Nguyễn Văn A',
+          AppText(
+            text: controller.user!.name ?? '',
             color: MyColors.primaryColor,
             size: 20,
             isBold: true,
