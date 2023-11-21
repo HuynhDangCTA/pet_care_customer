@@ -10,6 +10,7 @@ class UserResponse {
   String? avatar;
   String? type;
   String? token;
+  String? verificationId;
   bool isDeleted;
   int times;
 
@@ -22,6 +23,7 @@ class UserResponse {
       this.times = 0,
       this.address,
       this.token,
+      this.verificationId,
       this.avatar,
       this.type,
       this.isDeleted = false});

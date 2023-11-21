@@ -3,6 +3,7 @@ import 'package:pet_care_customer/funtions/cart/cart_controller.dart';
 import 'package:pet_care_customer/funtions/home/home_controller.dart';
 import 'package:pet_care_customer/funtions/login/login_controller.dart';
 import 'package:pet_care_customer/funtions/order/order_controller.dart';
+import 'package:pet_care_customer/funtions/otp/otp_controller.dart';
 import 'package:pet_care_customer/funtions/personal/info/change_password_controller.dart';
 import 'package:pet_care_customer/funtions/personal/my_order/my_order_controller.dart';
 import 'package:pet_care_customer/funtions/personal/personal_controller.dart';
@@ -29,5 +30,6 @@ class AllBinding extends Bindings {
     Get.lazyPut(() => PersonalController());
     Get.lazyPut(() => MyOrderController());
     Get.lazyPut(() => ChangePasswordController());
+    Get.lazyPut(() => OTPController());
   }
 }

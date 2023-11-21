@@ -3,6 +3,7 @@ import 'package:pet_care_customer/bindings/all_binding.dart';
 import 'package:pet_care_customer/funtions/cart/cart_page.dart';
 import 'package:pet_care_customer/funtions/home/home_page.dart';
 import 'package:pet_care_customer/funtions/order/order_page.dart';
+import 'package:pet_care_customer/funtions/otp/otp_page.dart';
 import 'package:pet_care_customer/funtions/personal/contact/contact_page.dart';
 import 'package:pet_care_customer/funtions/personal/info/change_password_page.dart';
 import 'package:pet_care_customer/funtions/personal/info/info_page.dart';
@@ -97,6 +98,11 @@ class Routes {
     GetPage(
         name: RoutesConst.changePass,
         page: () => const ChangePasswordPage(),
+        transition: Transition.rightToLeft,
+        binding: AllBinding()),
+    GetPage(
+        name: RoutesConst.otp,
+        page: () => const OTPPage(),
         transition: Transition.rightToLeft,
         binding: AllBinding()),
   ];

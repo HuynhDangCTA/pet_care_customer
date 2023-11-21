@@ -58,6 +58,7 @@ dependencies:
   http: ^1.1.0
   lottie: ^2.6.0
   flutter_launcher_icons: ^0.13.1
+  firebase_auth: ^4.14.0
 
 dev_dependencies:
   flutter_test:

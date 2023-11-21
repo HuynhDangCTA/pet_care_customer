@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -7,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pet_care_customer/core/constants.dart';
 import 'package:pet_care_customer/routes/routes_const.dart';
 import 'package:pet_care_customer/services/fcm_service.dart';
+import 'package:pet_care_customer/util/dialog_util.dart';
 import 'package:pet_care_customer/util/encode_util.dart';
 import 'package:pet_care_customer/util/shared_pref.dart';
 
@@ -82,21 +84,29 @@ class RegisterController extends GetxController {
         address: address,
         avatar: image,
         type: type);
-
-    await FirebaseHelper.register(data).then((value) async {
-      state.value = StateSuccess();
-      data.id = value.id;
-      String? token = await FCMService.getToken(value.id!);
-      data.token = token;
-      await SharedPref.setUser(data);
-      String? id = await FirebaseHelper.getCustomer(phone);
-      if (id == null || id.isEmpty) {
-        await FirebaseHelper.newCustomer(data);
+    phone = phone.replaceFirst('0', '');
+    print('phone: $phone');
+    bool check = true;
+    await FirebaseHelper.checkRegister(data).then((value) {
+      if (value.docs.isNotEmpty) {
+        state.value = StateSuccess();
+        DialogUtil.showSnackBar('Tài khoản đã tồn tại');
+        check = false;
       }
-      Get.offAllNamed(RoutesConst.home);
-    }).catchError((error) {
-      state.value = StateError(error.toString());
     });
+    if (!check) return;
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+84$phone',
+      verificationCompleted: (PhoneAuthCredential credential) {},
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: (String verificationId, int? resendToken) {
+        state.value = StateSuccess();
+        data.verificationId = verificationId;
+        Get.toNamed(RoutesConst.otp, arguments: data);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
   }
 
   void pickImage() async {

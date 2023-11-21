@@ -15,4 +15,5 @@ class RoutesConst {
   static const contact = '/contact';
   static const info = '/info';
   static const changePass = '/changePass';
+  static const otp = '/otp';
 }

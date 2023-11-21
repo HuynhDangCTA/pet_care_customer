@@ -79,7 +79,7 @@ class MyOrderController extends GetxController {
 
   @override
   void onClose() {
-    orderListener.cancel();
     super.onClose();
+    orderListener.cancel();
   }
 }

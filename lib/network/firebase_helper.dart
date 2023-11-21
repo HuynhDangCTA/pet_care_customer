@@ -44,6 +44,12 @@ class FirebaseHelper {
     return result;
   }
 
+  static Future<QuerySnapshot> checkRegister(UserResponse data) async {
+    return await database.collection(Constants.users)
+        .where(Constants.username,isEqualTo: data.username!)
+        .get();
+  }
+
   static Future<String?> getCustomer(String phone) async {
     String? id;
     await database
