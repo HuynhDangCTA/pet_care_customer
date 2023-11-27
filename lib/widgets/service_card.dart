@@ -15,7 +15,9 @@ class ServiceCard extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {
-        onPick!(service);
+        if (onPick != null) {
+          onPick!(service);
+        }
       },
       child: Card(
         color: Colors.white,

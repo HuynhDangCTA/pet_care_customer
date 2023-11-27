@@ -13,6 +13,7 @@ import 'package:pet_care_customer/funtions/personal/personal_page.dart';
 import 'package:pet_care_customer/funtions/product/product_detail/product_detail_page.dart';
 import 'package:pet_care_customer/funtions/product/product_page.dart';
 import 'package:pet_care_customer/funtions/services/room/room_page.dart';
+import 'package:pet_care_customer/funtions/services/service_detail/service_detail_page.dart';
 import 'package:pet_care_customer/funtions/splash/splash_screen.dart';
 import 'package:pet_care_customer/routes/routes_const.dart';
 import '../funtions/login/login_page.dart';
@@ -103,6 +104,12 @@ class Routes {
     GetPage(
         name: RoutesConst.otp,
         page: () => const OTPPage(),
+        transition: Transition.rightToLeft,
+        binding: AllBinding()),
+
+    GetPage(
+        name: RoutesConst.serviceDetail,
+        page: () => ServiceDetailPage(service: Get.arguments),
         transition: Transition.rightToLeft,
         binding: AllBinding()),
   ];

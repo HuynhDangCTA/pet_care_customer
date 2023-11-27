@@ -84,7 +84,7 @@ class VoucherPage extends GetView<VoucherController> {
                           }
                         },
                         child: Container(
-                          height: 150,
+                          height: 180,
                           width: 50,
                           decoration: BoxDecoration(
                               color: (!voucher.isSave &&

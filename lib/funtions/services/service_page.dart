@@ -19,6 +19,9 @@ class ServicePage extends GetView<ServiceController> {
             itemBuilder: (context, index) {
               return ServiceCard(
                 service: controller.services[index],
+                onPick: (service) {
+                  Get.toNamed(RoutesConst.serviceDetail, arguments: service);
+                },
               );
             },
           )

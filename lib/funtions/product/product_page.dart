@@ -83,10 +83,13 @@ class ProductPage extends GetView<ProductController> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        width: Get.width,
-        padding: const EdgeInsets.all(10),
-        child: productWidget,
+      body: SingleChildScrollView(
+        child: Container(
+          width: Get.width,
+          height: Get.height - Get.bottomBarHeight - AppBar().preferredSize.height,
+          padding: const EdgeInsets.all(10),
+          child: productWidget,
+        ),
       ),
     );
   }
