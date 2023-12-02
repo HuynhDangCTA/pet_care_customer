@@ -27,8 +27,8 @@ class ServiceController extends GetxController {
           result.add(service);
         }
         services.value = result;
-        DialogUtil.hideLoading();
       }
+      DialogUtil.hideLoading();
     });
   }
 }
