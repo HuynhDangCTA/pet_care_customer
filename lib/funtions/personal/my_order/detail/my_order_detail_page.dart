@@ -130,15 +130,17 @@ class MyOrderDetailPage extends GetView<MyOrderController> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(text: product.name ?? ''),
-                            AppText(
-                                text: NumberUtil.formatCurrency(product.price! *
-                                    (100 - product.discount!) /
-                                    100))
-                          ],
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(text: product.name ?? '', maxLines: 2,),
+                              AppText(
+                                  text: NumberUtil.formatCurrency(product.price! *
+                                      (100 - product.discount!) /
+                                      100))
+                            ],
+                          ),
                         )
                       ],
                     ),

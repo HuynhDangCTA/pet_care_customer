@@ -58,8 +58,8 @@ class ProductPage extends GetView<ProductController> {
             Expanded(
                 child: (controller.products.isNotEmpty)
                     ? GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
+                        // physics: const NeverScrollableScrollPhysics(),
+                        // shrinkWrap: true,
                         itemCount: controller.products.value.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
